@@ -1,4 +1,5 @@
 import express from 'express'
+import cookieParser from 'cookie-parser'
 import { config } from 'dotenv'
 
 // File extension needed for local files with ES modules
@@ -12,6 +13,7 @@ const PORT = process.env.PORT
 
 // Allow for json requests (post requests) in req.body
 app.use(express.json())
+app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
 

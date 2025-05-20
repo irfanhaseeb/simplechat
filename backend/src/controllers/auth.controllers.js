@@ -99,3 +99,32 @@ export const logout = (req, res) => {
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
+
+// Update profile - only profile pic can be updated (hosted on cloudinary)
+export const updateProfile = async (req, res) => {
+  try {
+    // User is from middleware
+    const { user, profilePic } = req.body
+    const userId = user._id
+
+    if (!profilePic) {
+      return res.status(400).json({ message: 'profilePic is required' })
+    }
+
+    // Upload to cloudinary
+    const uploadResponse = await cloudinary.uploader.upload(profilePic)
+
+    // Update user with new image url
+    // TODO: does this work with select
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true },
+    ).select('-password')
+
+    res.status(200).json(updatedUser)
+  } catch (error) {
+    console.error('Error in update-profile controller: ', error.message)
+    return res.status(500).json({ message: 'Internal server error' })
+  }
+}

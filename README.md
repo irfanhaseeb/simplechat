@@ -8,6 +8,9 @@ MONGODB_URI=<...>
 PORT=<...>
 JWT_SECRET=<...>
 NODE_ENV=<development | production>
+CLOUDINARY_CLOUD_NAME=<...>
+CLOUDINARY_API_KEY=<...>
+CLOUDINARY_API_SECRET=<...>
 ```
 
 
