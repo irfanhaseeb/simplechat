@@ -114,17 +114,21 @@ export const updateProfile = async (req, res) => {
     // Upload to cloudinary
     const uploadResponse = await cloudinary.uploader.upload(profilePic)
 
-    // Update user with new image url
-    // TODO: does this work with select
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { profilePic: uploadResponse.secure_url },
-      { new: true },
-    ).select('-password')
+    // Update user with new image url, no select needed as we filter out the passwd in middleware
+    const updatedUser = await User.findByIdAndUpdate(userId, { profilePic: uploadResponse.secure_url }, { new: true })
 
-    res.status(200).json(updatedUser)
+    return res.status(200).json(updatedUser)
   } catch (error) {
     console.error('Error in update-profile controller: ', error.message)
+    return res.status(500).json({ message: 'Internal server error' })
+  }
+}
+
+export const checkAuth = (req, res) => {
+  try {
+    return res.status(200).json(req.user)
+  } catch (error) {
+    console.error('Error in check auth controller: ', error.message)
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
