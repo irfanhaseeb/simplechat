@@ -104,14 +104,14 @@ export const logout = (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     // User is from middleware
-    const { user, profilePic } = req.body
-    const userId = user._id
+    const { profilePic } = req.body
+    const userId = req.user._id
 
     if (!profilePic) {
       return res.status(400).json({ message: 'profilePic is required' })
     }
 
-    // Upload to cloudinary
+    // Upload to cloudinary (profilePic is a base-64 encoded image)
     const uploadResponse = await cloudinary.uploader.upload(profilePic)
 
     // Update user with new image url, no select needed as we filter out the passwd in middleware
