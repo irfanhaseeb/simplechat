@@ -28,3 +28,5 @@ any fast hashing functions.
 - Use secure cookie settings (HttpOnly, Secure, SameSite).
 - Rotate session id after login.
 - Be aware of CSRF and XSS. (CSRF tokens).
+
+### React
