@@ -6,6 +6,7 @@ import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
 import { useAuthStore } from './store/useAuthStore'
+import { Toaster } from 'react-hot-toast'
 
 const App = () => {
   // Global state using zustand
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
       </Routes>
+      <Toaster />
     </div>
   )
 }

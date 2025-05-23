@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import toast from 'react-hot-toast'
 import { axiosInstance } from '../lib/axios'
 
 // Global state management using zustand, to avoid prop drilling
@@ -25,5 +26,17 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  signup: async (data) => {},
+  signup: async (data) => {
+    set({ isSigningUp: true })
+    try {
+      const res = await axiosInstance.post('/auth/signup', data)
+      set({ authUser: res.data })
+      toast.success('Account created successfully')
+    } catch (error) {
+      // In our API, any errors have the message field where the error is described
+      toast.error(error.response.data.message)
+    } finally {
+      set({ isSigningUp: false })
+    }
+  },
 }))

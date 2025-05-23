@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuthStore } from '../store/useAuthStore'
 import { Eye, EyeOff, LoaderPinwheel, Lock, Mail, MessageSquare, User } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import AuthImagePattern from '../components/AuthImagePattern'
 
 const SignUpPage = () => {
@@ -15,11 +16,35 @@ const SignUpPage = () => {
   const { signup, isSigningUp } = useAuthStore()
 
   // Simple client-side validation for form
-  const validateForm = () => {}
+  const validateForm = () => {
+    if (!formData.fullName.trim()) {
+      return toast.error('Full name is required')
+    }
+    if (!formData.email.trim()) {
+      return toast.error('Email is required')
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email.trim())) {
+      return toast.error('Invalid email')
+    }
+    if (!formData.password) {
+      return toast.error('Password is required')
+    }
+    if (formData.password.length < 6) {
+      return toast.error('Password must be at least 6 characters')
+    }
+    return true
+  }
 
   const handleSubmit = (e) => {
     // Prevent page refresh
     e.preventDefault()
+
+    const validFormFields = validateForm()
+
+    if (validFormFields === true) {
+      // Call signup function to access API endpoint for signup
+      signup(formData)
+    }
   }
 
   return (
