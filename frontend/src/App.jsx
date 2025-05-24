@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
 import { useAuthStore } from './store/useAuthStore'
 import { Toaster } from 'react-hot-toast'
+import LoginPage from './pages/LoginPage'
 
 const App = () => {
   // Global state using zustand
@@ -35,6 +36,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
       </Routes>
       <Toaster />
     </div>

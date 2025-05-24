@@ -1,26 +1,21 @@
 import { useState } from 'react'
-import { Eye, EyeOff, LoaderPinwheel, Lock, Mail, MessageSquare, User } from 'lucide-react'
+import { Eye, EyeOff, LoaderPinwheel, Lock, Mail, MessageSquare } from 'lucide-react'
 import { Link } from 'react-router-dom'
+
+import AuthImagePattern from '../components/AuthImagePattern'
+import { useAuthStore } from '../store/useAuthStore'
 import toast from 'react-hot-toast'
 
-import { useAuthStore } from '../store/useAuthStore'
-import AuthImagePattern from '../components/AuthImagePattern'
-
-const SignUpPage = () => {
+const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
-    fullName: '',
     email: '',
     password: '',
   })
 
-  const { signup, isSigningUp } = useAuthStore()
+  const { login, isLoggingIn } = useAuthStore()
 
-  // Simple client-side validation for form
   const validateForm = () => {
-    if (!formData.fullName.trim()) {
-      return toast.error('Full name is required')
-    }
     if (!formData.email.trim()) {
       return toast.error('Email is required')
     }
@@ -30,27 +25,22 @@ const SignUpPage = () => {
     if (!formData.password) {
       return toast.error('Password is required')
     }
-    if (formData.password.length < 6) {
-      return toast.error('Password must be at least 6 characters')
-    }
     return true
   }
 
-  const handleSubmit = (e) => {
-    // Prevent page refresh
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     const validFormFields = validateForm()
 
     if (validFormFields === true) {
-      // Call signup function to access API endpoint for signup
-      signup(formData)
+      login(formData)
     }
   }
 
   return (
     <div className="h-screen grid lg:grid-cols-2">
-      {/* Left side of screen */}
+      {/* Left side - form */}
       <div className="flex flex-col justify-center items-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
@@ -59,33 +49,13 @@ const SignUpPage = () => {
               <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                 <MessageSquare className="size-6 text-primary" />
               </div>
-              <h1 className="text-2xl font-bold mt-2">Create Account</h1>
-              <p className="text-base-content/60">Get started with your free account</p>
+              <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
+              <p className="text-base-content/60">Sign into your account</p>
             </div>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Full Name input */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Full Name</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="size-5 text-base-content/40" />
-                </div>
-                <input
-                  type="text"
-                  className="input input-bordered w-full pl-10"
-                  placeholder="John Doe"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* Email input */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Email</span>
@@ -104,7 +74,6 @@ const SignUpPage = () => {
               </div>
             </div>
 
-            {/* Passwordinput */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Password</span>
@@ -116,8 +85,8 @@ const SignUpPage = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   className="input input-bordered w-full pl-10"
-                  placeholder=""
                   value={formData.password}
+                  placeholder=""
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
                 <button
@@ -135,24 +104,24 @@ const SignUpPage = () => {
             </div>
 
             {/* Submit button */}
-            <button type="submit" className="btn btn-primary w-full" disabled={isSigningUp}>
-              {isSigningUp ? (
+            <button type="submit" className="btn btn-primary w-full" disabled={isLoggingIn}>
+              {isLoggingIn ? (
                 <>
                   <LoaderPinwheel className="size-5 animate-spin" />
-                  Signing Up...
+                  Signing In...
                 </>
               ) : (
-                'Sign up'
+                'Sign in'
               )}
             </button>
           </form>
 
-          {/* Link to signin page */}
+          {/* Link to signup page */}
           <div className="text-center">
             <p className="text-base-content/60">
-              Already have an account?{' '}
-              <Link to="/login" className="link link-primary">
-                Sign in
+              Don&apos;t have an account?{' '}
+              <Link to="/signup" className="link link-primary">
+                Create account
               </Link>
             </p>
           </div>
@@ -160,9 +129,9 @@ const SignUpPage = () => {
       </div>
 
       {/* right side of screen (decoration) */}
-      <AuthImagePattern title="Join our community" subtitle="Connect with others, share moments, and stay in touch." />
+      <AuthImagePattern title="Welcome back!" subtitle="Sign in to catch up with your messages." />
     </div>
   )
 }
 
-export default SignUpPage
+export default LoginPage
