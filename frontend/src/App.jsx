@@ -8,6 +8,7 @@ import SignUpPage from './pages/SignUpPage'
 import { useAuthStore } from './store/useAuthStore'
 import { Toaster } from 'react-hot-toast'
 import LoginPage from './pages/LoginPage'
+import ProfilePage from './pages/ProfilePage'
 
 const App = () => {
   // Global state using zustand
@@ -34,7 +35,11 @@ const App = () => {
       <Navbar />
 
       <Routes>
+        {/* Routes meant only for logged in users */}
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+
+        {/* Signup/Login routes, only meant for users who are not logged in  */}
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
       </Routes>
