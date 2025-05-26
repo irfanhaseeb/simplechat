@@ -1,18 +1,21 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Loader2 } from 'lucide-react'
+import { Toaster } from 'react-hot-toast'
 
+import { useAuthStore } from './store/useAuthStore'
+import { useThemeStore } from './store/useThemeStore'
 import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import SignUpPage from './pages/SignUpPage'
-import { useAuthStore } from './store/useAuthStore'
-import { Toaster } from 'react-hot-toast'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
+import SettingsPage from './pages/SettingsPage'
 
 const App = () => {
   // Global state using zustand
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
+  const { theme } = useThemeStore()
 
   useEffect(() => {
     checkAuth()
@@ -31,7 +34,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div data-theme={theme}>
       <Navbar />
 
       <Routes>
@@ -42,6 +45,9 @@ const App = () => {
         {/* Signup/Login routes, only meant for users who are not logged in  */}
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+
+        {/* Options - both logged in and logged out users can access */}
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
       <Toaster />
     </div>
