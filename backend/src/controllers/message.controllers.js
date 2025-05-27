@@ -1,5 +1,6 @@
 import Message from '../models/message.models.js'
 import User from '../models/user.models.js'
+import cloudinary from '../lib/cloudinary.js'
 
 // Get a list of all users except the one that is currently logged in
 export const getUsersForSidebar = async (req, res) => {
