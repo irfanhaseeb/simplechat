@@ -3,12 +3,14 @@ import { create } from 'zustand'
 
 import { axiosInstance } from '../lib/axios'
 
-export const useChatStore = create((set) => ({
+// Note: order of the get/set matters
+export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  isMessageSending: false,
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
 
@@ -33,6 +35,21 @@ export const useChatStore = create((set) => ({
       toast.error(error.response.data.message)
     } finally {
       set({ isMessagesLoading: false })
+    }
+  },
+
+  // Send message to selected user
+  sendMessage: async (messageData) => {
+    set({ isMessageSending: true })
+    const { selectedUser, messages } = get()
+    try {
+      const res = await axiosInstance.post(`/message/send/${selectedUser._id}`, messageData)
+      // Append new message to messages array
+      set({ messages: [...messages, res.data] })
+    } catch (error) {
+      toast.error(error.response.data.message)
+    } finally {
+      set({ isMessageSending: false })
     }
   },
 }))
