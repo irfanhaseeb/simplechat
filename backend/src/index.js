@@ -7,10 +7,9 @@ import { config } from 'dotenv'
 import connectDb from './lib/db.js'
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/message.routes.js'
+import { app, server } from './lib/socket.js'
 
 config()
-const app = express()
-
 const PORT = process.env.PORT
 
 // Allow for json requests (post requests) in req.body
@@ -26,7 +25,7 @@ app.use(
 app.use('/api/auth', authRoutes)
 app.use('/api/message', messageRoutes)
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`)
   connectDb()
 })

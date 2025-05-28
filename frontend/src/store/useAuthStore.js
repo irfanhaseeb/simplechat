@@ -1,9 +1,12 @@
 import { create } from 'zustand'
 import toast from 'react-hot-toast'
 import { axiosInstance } from '../lib/axios'
+import { io } from 'socket.io-client'
+
+const BASE_URL = 'http://localhost:5001'
 
 // Global state management using zustand, to avoid prop drilling
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
   // Having these as global states allows any component
   // to access it, that's the upside of this.
   authUser: null,
@@ -11,6 +14,7 @@ export const useAuthStore = create((set) => ({
   isLoggingIn: false,
   isUpdatingProfile: false,
   onlineUsers: [],
+  socket: null,
 
   isCheckingAuth: true,
 
@@ -19,6 +23,8 @@ export const useAuthStore = create((set) => ({
     try {
       const response = await axiosInstance.get('/auth/check')
       set({ authUser: response.data })
+      // Connect to socket server
+      get().connectSocket()
     } catch (error) {
       console.error(`error in checkAuth: ${error.message}`)
       set({ authUser: null })
@@ -33,6 +39,8 @@ export const useAuthStore = create((set) => ({
       const res = await axiosInstance.post('/auth/signup', data)
       set({ authUser: res.data })
       toast.success('Account created successfully')
+      // Connect to socket server
+      get().connectSocket()
     } catch (error) {
       // In our API, any errors have the message field where the error is described
       toast.error(error.response.data.message)
@@ -47,6 +55,8 @@ export const useAuthStore = create((set) => ({
       const res = await axiosInstance.post('/auth/login', data)
       set({ authUser: res.data })
       toast.success('Logged in successfully')
+      // Connect to the socket.io server
+      get().connectSocket()
     } catch (error) {
       toast.error(error.response.data.message)
     } finally {
@@ -59,6 +69,7 @@ export const useAuthStore = create((set) => ({
       await axiosInstance.post('/auth/logout')
       set({ authUser: null })
       toast.success('Logged out successfully')
+      get().disconnectSocket()
     } catch (error) {
       toast.error(error.response.data.message)
     }
@@ -76,6 +87,21 @@ export const useAuthStore = create((set) => ({
       console.error('error in update profile: ', error.response.data.message)
     } finally {
       set({ isUpdatingProfile: false })
+    }
+  },
+
+  connectSocket: () => {
+    const { authUser } = get()
+    if (!authUser || get().socket?.connected) {
+      return
+    }
+    get().socket = io(BASE_URL)
+    get().socket.connect()
+  },
+
+  disconnectSocket: () => {
+    if (get().socket?.connected) {
+      get().socket.disconnect()
     }
   },
 }))

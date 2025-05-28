@@ -33,3 +33,8 @@ any fast hashing functions.
 - React context should be used only with data that doesn't change a lot. Static states, etc.
     - Causes many unrelated components to re-render
     - With zustand, only components subscribed to the global store re-render.
+- In development (React's strict mode), every useEffect runs twice
+
+### Socket.io
+- Need to add socket server on top of the REST API for realtime communication.
+    - Socket.io and Socket.io-client are both needed.
