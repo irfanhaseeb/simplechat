@@ -2,6 +2,7 @@ import toast from 'react-hot-toast'
 import { create } from 'zustand'
 
 import { axiosInstance } from '../lib/axios'
+import { useAuthStore } from './useAuthStore'
 
 // Note: order of the get/set matters
 export const useChatStore = create((set, get) => ({
@@ -51,5 +52,26 @@ export const useChatStore = create((set, get) => ({
     } finally {
       set({ isMessageSending: false })
     }
+  },
+
+  subscribeToMessages: () => {
+    const { selectedUser } = get()
+    if (!selectedUser) {
+      return
+    }
+
+    // Getting state from another store
+    const socket = useAuthStore.getState().socket
+
+    // Add message to state with a socket event
+    // TODO: Only recieve from person we are chatting with currently
+    socket.on('newMessage', (newMessage) => {
+      set({ messages: [...get().messages, newMessage] })
+    })
+  },
+
+  unsubscribeToMessages: () => {
+    const socket = useAuthStore.getState().socket
+    socket.off('newMessage')
   },
 }))

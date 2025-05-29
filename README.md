@@ -34,6 +34,8 @@ any fast hashing functions.
     - Causes many unrelated components to re-render
     - With zustand, only components subscribed to the global store re-render.
 - In development (React's strict mode), every useEffect runs twice
+- UseEffect returns a function which is used for cleanup, this is useful for situations where we have to add subscriptions to event listeners and remove them.
+    - The cleanup function runs after the component unmounts.
 
 ### Socket.io
 - Need to add socket server on top of the REST API for realtime communication.

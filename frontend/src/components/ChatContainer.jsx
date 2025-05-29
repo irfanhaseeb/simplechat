@@ -9,12 +9,16 @@ import MessageInput from './MessageInput'
 import MessageSkeleton from './skeletons/MessageSkeleton'
 
 const ChatContainer = () => {
-  const { messages, getMessages, isMessagesLoading, selectedUser } = useChatStore()
+  const { messages, getMessages, isMessagesLoading, selectedUser, subscribeToMessages, unsubscribeToMessages } =
+    useChatStore()
   const { authUser } = useAuthStore()
 
   useEffect(() => {
     getMessages(selectedUser._id)
-  }, [getMessages, selectedUser._id])
+    subscribeToMessages()
+
+    return () => unsubscribeToMessages()
+  }, [getMessages, selectedUser._id, subscribeToMessages, unsubscribeToMessages])
 
   // Show a skeleton if messages are loading
   if (isMessagesLoading) {

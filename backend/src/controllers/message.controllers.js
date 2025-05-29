@@ -1,6 +1,7 @@
 import Message from '../models/message.models.js'
 import User from '../models/user.models.js'
 import cloudinary from '../lib/cloudinary.js'
+import { getReceiverSocketId, io } from '../lib/socket.js'
 
 // Get a list of all users except the one that is currently logged in
 export const getUsersForSidebar = async (req, res) => {
@@ -63,7 +64,12 @@ export const sendMessage = async (req, res) => {
 
     await newMessage.save()
 
-    // TODO: Realtime functionality w/ socket.io
+    const receiverSocketId = getReceiverSocketId(receiverId)
+
+    // If user is online, send the message to them in realtime
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('newMessage', newMessage)
+    }
 
     // 201 resource created
     return res.status(201).json(newMessage)

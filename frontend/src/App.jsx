@@ -14,14 +14,14 @@ import SettingsPage from './pages/SettingsPage'
 
 const App = () => {
   // Global state using zustand
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore()
   const { theme } = useThemeStore()
+
+  console.log({ onlineUsers })
 
   useEffect(() => {
     checkAuth()
   }, [checkAuth])
-
-  console.log({ authUser })
 
   // Conditionally return some JSX
   // is authentication status is being checked, show a loading screen

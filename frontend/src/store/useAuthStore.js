@@ -95,8 +95,17 @@ export const useAuthStore = create((set, get) => ({
     if (!authUser || get().socket?.connected) {
       return
     }
-    get().socket = io(BASE_URL)
+    get().socket = io(BASE_URL, {
+      query: {
+        userId: get().authUser._id,
+      },
+    })
     get().socket.connect()
+
+    // Listen for updates in the users
+    get().socket.on('getOnlineUsers', (userIds) => {
+      set({ onlineUsers: userIds })
+    })
   },
 
   disconnectSocket: () => {
