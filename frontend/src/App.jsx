@@ -27,7 +27,7 @@ const App = () => {
   // is authentication status is being checked, show a loading screen
   if (isCheckingAuth && !authUser) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="size-10 animate-spin" />
       </div>
     )
