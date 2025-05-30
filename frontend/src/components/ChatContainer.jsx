@@ -67,6 +67,7 @@ const ChatContainer = () => {
             </div>
           </div>
         ))}
+        {messages.length === 0 && <div className="text-center text-zinc-500 py-4">No messages with this user. Say hi!</div>}
       </div>
       <MessageInput />
     </div>
