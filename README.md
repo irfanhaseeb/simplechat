@@ -36,6 +36,7 @@ any fast hashing functions.
 - In development (React's strict mode), every useEffect runs twice
 - UseEffect returns a function which is used for cleanup, this is useful for situations where we have to add subscriptions to event listeners and remove them.
     - The cleanup function runs after the component unmounts.
+- UseEffect runs every time something in the dependency array changes. If no dependency array is specified, then it runs once on component mount.
 
 ### Socket.io
 - Need to add socket server on top of the REST API for realtime communication.

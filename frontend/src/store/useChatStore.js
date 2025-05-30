@@ -64,8 +64,11 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState().socket
 
     // Add message to state with a socket event
-    // TODO: Only recieve from person we are chatting with currently
     socket.on('newMessage', (newMessage) => {
+      // Only recieve from person we are chatting with currently
+      if (newMessage.senderId != get().selectedUser._id) {
+        return
+      }
       set({ messages: [...get().messages, newMessage] })
     })
   },
