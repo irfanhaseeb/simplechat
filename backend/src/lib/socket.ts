@@ -1,6 +1,6 @@
+import { createServer } from 'node:http' // built into node
 import express from 'express'
 import { Server } from 'socket.io'
-import { createServer } from 'http' // built into node
 
 const app = express()
 const server = createServer(app)
@@ -13,9 +13,9 @@ const io = new Server(server, {
 
 // Used to map socket.io id's with user ids from database
 // {userId: socketId}
-const userSocketMap = {}
+const userSocketMap: Record<string, string> = {}
 
-export const getReceiverSocketId = (userId) => {
+export const getReceiverSocketId = (userId: string) => {
   return userSocketMap[userId]
 }
 
@@ -24,11 +24,15 @@ io.on('connection', (socket) => {
   // Get userId from client, add to map
   console.log('A user connected', socket.id)
   const userId = socket.handshake.query.userId
+  if (typeof userId !== 'string') {
+    throw new Error('userId not a string')
+  }
   if (userId) {
     userSocketMap[userId] = socket.id
   }
 
   // io.emit is used to send events to all the connected clients
+  // We update the list of online users and send them to everyone
   io.emit('getOnlineUsers', Object.keys(userSocketMap))
 
   socket.on('disconnect', () => {

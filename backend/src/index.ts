@@ -1,15 +1,15 @@
-import express from 'express'
-import cors from 'cors'
+import 'dotenv/config'
+
 import cookieParser from 'cookie-parser'
-import { config } from 'dotenv'
+import cors from 'cors'
+import express from 'express'
 
 // File extension needed for local files with ES modules
 import connectDb from './lib/db.js'
+import { app, server } from './lib/socket.js'
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/message.routes.js'
-import { app, server } from './lib/socket.js'
 
-config()
 const PORT = process.env.PORT
 
 // Allow for json requests (post requests) in req.body

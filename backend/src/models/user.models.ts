@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { type HydratedDocumentFromSchema } from 'mongoose'
 
 // Define a MongoDB model schema for users
 const userSchema = new mongoose.Schema(
@@ -27,5 +27,8 @@ const userSchema = new mongoose.Schema(
 
 // Singular and first character as uppercase (mongoose standards)
 const User = mongoose.model('User', userSchema)
+
+export type MongooseUser = HydratedDocumentFromSchema<typeof userSchema>
+export type MongooseUserNoPassword = Omit<MongooseUser, 'password'>
 
 export default User

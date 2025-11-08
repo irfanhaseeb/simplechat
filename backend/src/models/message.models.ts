@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { type HydratedDocumentFromSchema } from 'mongoose'
 
 const messageSchema = new mongoose.Schema(
   {
@@ -23,5 +23,7 @@ const messageSchema = new mongoose.Schema(
 )
 
 const Message = mongoose.model('Message', messageSchema)
+
+export type MongooseMessage = HydratedDocumentFromSchema<typeof messageSchema>
 
 export default Message

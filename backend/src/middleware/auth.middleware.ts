@@ -1,8 +1,12 @@
+import type { NextFunction, RequestHandler, Response } from 'express'
+import type { AuthenticatedRequest } from './types.js'
+
 import jwt from 'jsonwebtoken'
 
+import { getEnvVariable } from '../lib/utils.js'
 import User from '../models/user.models.js'
 
-export const protectRoute = async (req, res, next) => {
+export const protectRoute: RequestHandler = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     // jwt is the name of the cookie we have set
     // Note: grabbing cookies is done using cookieparser library
@@ -11,9 +15,9 @@ export const protectRoute = async (req, res, next) => {
       return res.status(401).json({ message: 'Unauthorized: no JWT token in cookies' })
     }
 
-    const decodedJwt = jwt.verify(token, process.env.JWT_SECRET)
+    const decodedJwt = jwt.verify(token, getEnvVariable('JWT_SECRET'))
 
-    if (!decodedJwt) {
+    if (!decodedJwt || typeof decodedJwt === 'string') {
       return res.status(401).json({ message: 'Unauthorized: invalid token' })
     }
 
@@ -26,9 +30,9 @@ export const protectRoute = async (req, res, next) => {
 
     // Add the user's details to the request, then call the next handler
     req.user = user
-    next()
-  } catch (error) {
-    console.error('Error in protect-route controller: ', error.message)
+    return next()
+  } catch (error: unknown) {
+    console.error(`Error in protect-route controller: ${error instanceof Error ? error.message : String(error)}`)
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
