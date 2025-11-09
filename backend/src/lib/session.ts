@@ -5,7 +5,7 @@ import { createClient } from 'redis'
 
 import { getEnvVariable } from './utils.js'
 
-const redisClient = createClient({ url: 'redis://localhost:6379' })
+const redisClient = createClient({ url: `redis://${getEnvVariable('REDIS_HOST')}:${getEnvVariable('REDIS_PORT')}` })
 await redisClient.connect()
 
 export const sessionMiddleware = session({
@@ -16,7 +16,7 @@ export const sessionMiddleware = session({
   rolling: true,
   cookie: {
     httpOnly: true,
-    secure: getEnvVariable('NODE_ENV') === 'production',
+    secure: getEnvVariable('NODE_ENV') !== 'development',
     sameSite: 'strict',
     maxAge: 1000 * 60 * 60,
   },
