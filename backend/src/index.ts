@@ -1,20 +1,21 @@
 import 'dotenv/config'
 
-import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 
 // File extension needed for local files with ES modules
 import connectDb from './lib/db.js'
+import { sessionMiddleware } from './lib/session.js'
 import { app, server } from './lib/socket.js'
+import { getEnvVariable } from './lib/utils.js'
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/message.routes.js'
 
-const PORT = process.env.PORT
+const PORT = getEnvVariable('PORT')
 
 // Allow for json requests (post requests) in req.body
 app.use(express.json({ limit: '100mb' }))
-app.use(cookieParser())
+app.use(sessionMiddleware)
 app.use(
   cors({
     origin: 'http://localhost:5173',

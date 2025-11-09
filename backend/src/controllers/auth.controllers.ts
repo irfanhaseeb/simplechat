@@ -14,10 +14,9 @@ import type {
 import bcrypt from 'bcryptjs'
 
 import cloudinary from '../lib/cloudinary.js'
-import { generateToken } from '../lib/utils.js'
 import User from '../models/user.models.js'
 
-// Create user in DB and log user in with a JWT session cookie
+// Create new user and session
 export const signup = async (req: SignupRequest, res: SignupResponse): Promise<SignupResponse> => {
   const { fullName, email, password } = req.body
 
@@ -55,11 +54,12 @@ export const signup = async (req: SignupRequest, res: SignupResponse): Promise<S
       return res.status(400).json({ message: 'Invalid user data' })
     }
 
-    // Generate and send JWT token to client
-    generateToken(newUser._id.toString(), res)
-
     // Create a new user in the DB and send a 201 response
     await newUser.save()
+
+    // Set user session
+    req.session.user = { id: newUser._id.toString() }
+
     return res.status(201).json({
       _id: newUser._id.toString(),
       fullName: newUser.fullName,
@@ -74,7 +74,7 @@ export const signup = async (req: SignupRequest, res: SignupResponse): Promise<S
   }
 }
 
-// Take an email and a password and log a user in by sending a JWT cookie
+// Create session for user
 export const login = async (req: LoginRequest, res: LoginResponse): Promise<LoginResponse> => {
   const { email, password } = req.body
 
@@ -91,7 +91,8 @@ export const login = async (req: LoginRequest, res: LoginResponse): Promise<Logi
       return res.status(400).json({ message: 'Invalid credentials' })
     }
 
-    generateToken(user._id.toString(), res)
+    // Set user session
+    req.session.user = { id: user._id.toString() }
 
     return res.status(200).json({
       _id: user._id.toString(),
@@ -107,10 +108,12 @@ export const login = async (req: LoginRequest, res: LoginResponse): Promise<Logi
   }
 }
 
-// Remove the JWT cookie from the client-side, causing logout
-export const logout = (_: Request<never, never, never, never>, res: LogoutResponse): LogoutResponse => {
+export const logout = (req: Request<never, never, never, never>, res: LogoutResponse): LogoutResponse => {
   try {
-    res.cookie('jwt', '', { maxAge: 0 })
+    req.session.destroy((_error: unknown) => {
+      throw new Error('failed to destroy session')
+    })
+
     return res.status(200).json({ message: 'Logged out successfully' })
   } catch (error: unknown) {
     console.error(`Error in logout controller: ${error instanceof Error ? error.message : String(error)}`)
